@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+.env.* 
+scene_frame_split_env/
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Logs
+*.log
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dll
+
+# Static content (generated images/frames)
+static/frames/
+static/temp/
+
+# Uploaded videos (if saved)
+uploads/
+videos/
+
+# DB dumps or sensitive files
+*.db
+*.sqlite3
+
+# OS / misc
+.DS_Store
+Thumbs.db
