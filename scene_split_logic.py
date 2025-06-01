@@ -24,7 +24,10 @@ def extract_scene_frames(video_path, start_time, end_time, scene_id, video_name,
         return
 
     start_sec = int(start_time)
-    end_sec = max(int(end_time), start_sec + 1)  # éviter end_sec == start_sec
+    end_sec = max(int(end_time), start_sec + 1)
+
+    output_folder = os.path.join("static/frames", video_name)
+    os.makedirs(output_folder, exist_ok=True)
 
     for sec in range(start_sec, end_sec):
         cap.set(cv2.CAP_PROP_POS_MSEC, sec * 1000)
@@ -32,9 +35,8 @@ def extract_scene_frames(video_path, start_time, end_time, scene_id, video_name,
         if not ret:
             continue
 
-        frame_id = f"{scene_id}_{sec}"
-        image_path = f"static/frames/{video_name}_scene{scene_id}_{sec}.jpg"
-        os.makedirs(os.path.dirname(image_path), exist_ok=True)
+        frame_id = f"scene{scene_id}_{sec}"
+        image_path = os.path.join(output_folder, f"{frame_id}.jpg")
         cv2.imwrite(image_path, frame)
 
         frame_data = {
@@ -45,7 +47,7 @@ def extract_scene_frames(video_path, start_time, end_time, scene_id, video_name,
             "image_path": image_path
         }
 
-        result = frames_col.update_one(
+        frames_col.update_one(
             {"scene_id": scene_id, "timestamp": sec},
             {"$set": frame_data},
             upsert=True
@@ -145,7 +147,8 @@ def delete_video_data(video_name: str):
     if os.path.exists(video_path):
         os.remove(video_path)
     # Supprime les images de frames
-    frame_dir = "static/frames"
-    for filename in os.listdir(frame_dir):
-        if filename.startswith(video_name):
+    frame_dir = os.path.join("static/frames", video_name)
+    if os.path.isdir(frame_dir):
+        for filename in os.listdir(frame_dir):
             os.remove(os.path.join(frame_dir, filename))
+        os.rmdir(frame_dir)
